@@ -30,6 +30,7 @@ contract Twitter{
         _;
     }
 
+
     //EVENTS
     event TweetCreated(uint id, address indexed author, string content, uint timestamp, uint likes);
     event TweetLengthChanged(address indexed owner, uint16 tweetlength);
@@ -40,6 +41,8 @@ contract Twitter{
     //FUNCTIONS
 
     function createTweet(string memory _tweet) public {
+        require(bytes(_tweet).length > 0,"NO CONTENT, PLEASE WRITE SOMETHING");
+        require(tweets[msg.sender].length < MAX_TWEET_LIMIT, "THE MAXIMUM TWEETS REACHED");
         Tweet memory newTweet = Tweet({
             id: tweets[msg.sender].length,
             author: msg.sender,
@@ -74,15 +77,15 @@ contract Twitter{
         require(tweets[author][id].id == id, "TWEET DOESN'T EXIST");
         tweets[author][id].likes++;
 
-        emit TweetLiked(msg.sender, tweets[msg.sender][id].likes);
+        emit TweetLiked(author, tweets[msg.sender][id].likes);
     }
 
-    function uLlikeTweet(address author, uint id) public{
+    function unLlikeTweet(address author, uint id) public{
         require(tweets[author][id].id == id, "TWEET DOESN'T EXIST");
         require(tweets[author][id].likes > 0, "THERE ARE NO LIKES");
         tweets[author][id].likes--;
 
-        emit TweetUnLiked(msg.sender, tweets[msg.sender][id].likes);
+        emit TweetUnLiked(author, tweets[msg.sender][id].likes);
     }
 
 
